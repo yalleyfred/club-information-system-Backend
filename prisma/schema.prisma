@@ -1,0 +1,255 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                Int                 @id @default(autoincrement())
+  clubId            String              @unique
+  name              String              @unique
+  email             String              @unique
+  password          String?
+  profilePic        String?             @unique
+  location          String?
+  role              Role                @default(USER)
+  income            Income[]
+  memberDuesPayment MemberDuesPayment[]
+  dues              Due[]
+  members           Member[]
+  expense           Expense[]
+  activeMembers     ActiveMember[]
+  dropedMembers     DropedMember[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+
+  @@map("users")
+}
+
+model UserVerification {
+  id        Int      @id @default(autoincrement())
+  userId    Int      @unique
+  token     String
+  createdAt DateTime @default(now())
+
+  @@map("userVerification")
+}
+
+model DuesType {
+  id        Int       @id @default(autoincrement())
+  name      String
+  dues      Due[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("duesTypes")
+}
+
+enum AccountType {
+  ADMINISTRATION
+  ACTIVITY
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+model IncomeType {
+  id        Int         @id @default(autoincrement())
+  name      String
+  type      AccountType
+  income    Income[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+
+  @@map("incometypes")
+}
+
+model ExpenseType {
+  id        Int         @id @default(autoincrement())
+  name      String
+  type      AccountType
+  expense   Expense[]
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+  deletedAt DateTime?
+
+  @@map("expenseTypes")
+}
+
+model Income {
+  id           Int        @id @default(autoincrement())
+  lionYear     String
+  amount       Int
+  notes        String     @db.Text
+  incomeTypeId Int
+  incomeType   IncomeType @relation(fields: [incomeTypeId], references: [id])
+  userId       Int
+  user         User       @relation(fields: [userId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  deletedAt    DateTime?
+
+  @@map("incomes")
+}
+
+model Expense {
+  id            Int         @id @default(autoincrement())
+  lionYear      String
+  amount        Int
+  notes         String      @db.Text
+  expenseTypeId Int
+  expenseType   ExpenseType @relation(fields: [expenseTypeId], references: [id])
+  userId        Int
+  user          User        @relation(fields: [userId], references: [id])
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+  deletedAt     DateTime?
+
+  @@map("expenses")
+}
+
+model Member {
+  id                Int                 @id @default(autoincrement())
+  lionMemberId      String              @unique
+  name              String
+  email             String              @unique
+  phone             String
+  position          String
+  active            Boolean             @default(true)
+  userId            Int
+  user              User                @relation(fields: [userId], references: [id])
+  dropMembers       DropedMember[]
+  memberDuesPayment MemberDuesPayment[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+
+  @@map("members")
+}
+
+model ActiveMember {
+  id            Int       @id @default(autoincrement())
+  lionYear      String
+  month         Month
+  activeMembers Int
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@map("activeMembers")
+}
+
+enum Month {
+  January
+  February
+  March
+  April
+  May
+  June
+  July
+  August
+  September
+  October
+  November
+  December
+}
+
+model DropedMember {
+  id            Int       @id @default(autoincrement())
+  lionYear      String
+  dropedDate    String
+  activatedDate String?
+  memberId      Int
+  member        Member    @relation(fields: [memberId], references: [id])
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  deletedAt     DateTime?
+
+  @@map("dropedMembers")
+}
+
+model Due {
+  id                Int                 @id @default(autoincrement())
+  lionYear          String
+  amount            Int
+  duesTypeId        Int
+  duesType          DuesType            @relation(fields: [duesTypeId], references: [id])
+  userId            Int
+  user              User                @relation(fields: [userId], references: [id])
+  memberDuesPayment MemberDuesPayment[]
+  createdAt         DateTime            @default(now())
+  updatedAt         DateTime            @updatedAt
+  deletedAt         DateTime?
+
+  @@map("dues")
+}
+
+model MemberDuesPayment {
+  id        Int       @id @default(autoincrement())
+  lionYear  String
+  memberId  Int
+  member    Member    @relation(fields: [memberId], references: [id])
+  duesId    Int
+  dues      Due       @relation(fields: [duesId], references: [id])
+  amount    Int
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("memberDuesPayments")
+}
+
+// model AdminAccount {
+//   id                Int      @id @default(autoincrement())
+//   name              String?
+//   date              DateTime @default(now())
+//   opening           Int
+//   clubDues          Int?
+//   districtDues      Int?
+//   contribution      Int?
+//   tailtwisting      Int?
+//   fines             Int?
+//   otherIncome       Int?
+//   operatingExpenses Int?
+//   otherExpense      Int?
+//   districtAmountPaid Int?
+//   closing           Int
+//   userId            Int      
+//   createdAt         DateTime @default(now())
+//   updatedAt         DateTime @updatedAt
+//   user              User     @relation(fields: [userId], references: [id])
+
+//   @@map("adminAccounts")
+// }
+
+// model PublicAccount {
+//   id              Int      @id @default(autoincrement())
+//   name            String?
+//   date            DateTime @default(now())
+//   opening         Int
+//   contribution    Int?
+//   donation        Int?
+//   expenses        Int?
+//   activityExpense Int?
+//   closing         Int
+//   userId          Int      @unique
+//   createdAt       DateTime @default(now())
+//   updatedAt       DateTime @updatedAt
+//   user            User     @relation(fields: [userId], references: [id])
+
+//   @@map("publicAccounts")
+// }

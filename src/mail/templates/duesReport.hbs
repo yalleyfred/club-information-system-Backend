@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+        <html>
+        <head>
+            <style>
+                table {
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+                th, td {
+                    text-align: left;
+                    padding: 8px;
+                    border: 1px solid #ddd;
+                }
+                th {
+                    background-color: #f2f2f2;
+                }
+                tr:nth-child(even) {
+                    background-color: #f2f2f2;
+                }
+            </style>
+        </head>
+        <body>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Date</th>
+                        <th>Club Dues</th>
+                        <th>District Dues</th>
+                        <th>ClubDues Balance</th>
+                        <th>DistrictDues Balance</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td>{{name}}</td>
+                        <td>{{date}}</td>
+                        <td>₵{{clubDues}}</td>
+                        <td>₵{{districtDues}}</td>
+                        <td>₵{{clubDuesBal}}</td>
+                        <td>₵{{districtDuesBal}}</td>
+                    </tr>
+                    
+                </tbody>
+            </table>
+        </body>
+        </html>
