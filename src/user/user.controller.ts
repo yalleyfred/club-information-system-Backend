@@ -1,30 +1,48 @@
-import { Controller, Get, UseGuards, Patch, ParseIntPipe, Param } from '@nestjs/common';
+import { Controller, Get, UseGuards, Patch, ParseIntPipe, Param, HttpException, Body, Delete } from '@nestjs/common';
 import { JwtGuard } from 'src/auth/guard';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { UpdateUserDto } from './dto/user.dto';
+import { UserService } from './user.service';
+import { GetUser } from 'src/auth/decorator';
+import { Role } from '@prisma/client';
 
 @UseGuards(JwtGuard)
 @Controller('users')
 export class UserController {
-  constructor(private prisma: PrismaService) {}
+  constructor(private userService: UserService) {}
 
   @Get(':id')
-  async getUser(@Param('id', ParseIntPipe) userId: number) {
-    return await this.prisma.user.findUnique({
-      where: {
-        id: userId,
-      },
-    });
+  async getUserById(@GetUser('id') adminId: number, @Param('id', ParseIntPipe) userId: number) {
+    try {
+      return await this.userService.getUserById(adminId, userId)
+    }catch(error) {
+      throw new HttpException(error.message, 500)
+    }
   }
 
   @Get()
-  async getAllUsers() {
-    const users = await this.prisma.user.findMany();
-    let allUsers = [];
-    for (let user of users) {
-      delete user.password;
-      allUsers.push(user.name);
+  async getAllUsers(@GetUser('id') adminId: number) {
+    try {
+      return await this.userService.getAllUsers(adminId)
+    }catch (error) {
+      throw new HttpException(error.message, 500)
     }
+  }
 
-    return allUsers;
+  @Patch(':id')
+  async updateUser(@GetUser('id') adminId: number, @Body() user: UpdateUserDto, @Param('id', ParseIntPipe) userId: number) {
+    try {
+      return this.userService.updateUser(adminId, user, userId)
+    }catch(error) {
+      throw new HttpException(error.message, 500)
+    }
+  }
+
+  @Delete(':id')
+  async deleteUser(@GetUser('id') adminId: number, @Param('id', ParseIntPipe) userId: number) {
+    try {
+      return this.userService.deleteUser(adminId, userId);
+    }catch(error) {
+      throw new HttpException(error.message, 500)
+    }
   }
 }
