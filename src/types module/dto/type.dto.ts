@@ -5,28 +5,27 @@ export class CreateTypeDto {
   @IsString()
   @IsNotEmpty()
   name: string;
-
 }
 
 export class EditTypeDto {
   @IsString()
-  name:string
+  name: string;
 }
 
 export class CreateItemTypeDto {
   @IsString()
   @IsNotEmpty()
-  name: string; 
+  name: string;
 
   @IsNotEmpty()
-  type: AccountType; 
+  type: AccountType;
 }
 
 export class EditItemTypeDto {
   @IsString()
   @IsOptional()
-  name?: string; 
+  name?: string;
 
   @IsOptional()
-  type?: AccountType; 
+  type?: AccountType;
 }

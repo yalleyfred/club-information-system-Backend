@@ -6,13 +6,14 @@ import { PrismaService } from 'src/prisma/prisma.service';
 export class MemberService {
   constructor(private prisma: PrismaService) {}
 
-  async createMember(dto: createMemberDto, userId: number) {
+  public async createMember(dto: createMemberDto, userId: number) {
     try {
       const existingMember = await this.prisma.member.findUnique({
         where: {
-          lionMemberId: dto.lionMemberId
+          lionMemberId: dto.lionMemberId,
         },
       });
+
       if (existingMember) throw new HttpException('Member already exist', 400);
 
       return await this.prisma.member.create({
@@ -26,7 +27,7 @@ export class MemberService {
     }
   }
 
-  async getMembers(userId: number) {
+  public async getMembers(userId: number) {
     try {
       return await this.prisma.member.findMany({
         where: {
@@ -38,16 +39,16 @@ export class MemberService {
     }
   }
 
-  async getMember(userId: number, memberId: number) {
+  public async getMember(userId: number, memberId: number) {
     try {
       const member = await this.prisma.member.findFirst({
         where: {
           id: memberId,
-          userId
+          userId,
         },
       });
 
-      if (!member) throw new NotFoundException()
+      if (!member) throw new NotFoundException();
 
       return member;
     } catch (error) {
@@ -55,13 +56,14 @@ export class MemberService {
     }
   }
 
-  async editMember(userId: number, memberId: number, dto: EditMemberDto) {
+  public async editMember(userId: number, memberId: number, dto: EditMemberDto) {
     try {
       const member = await this.prisma.member.findUnique({
         where: {
           id: memberId,
         },
       });
+
       if (!member || member.userId !== userId)
         throw new ForbiddenException('Access to resource denied');
 
@@ -78,7 +80,7 @@ export class MemberService {
     }
   }
 
-  async dropMember(userId: number, memberId: number) {
+  public async dropMember(userId: number, memberId: number) {
     try {
       const member = await this.prisma.member.findUnique({
         where: {

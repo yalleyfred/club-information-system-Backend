@@ -1,34 +1,33 @@
-import { IsNotEmpty, IsString, IsNumber, IsOptional } from "class-validator";
+import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 
 export class CreateIncomeDto {
-    @IsNumber()
-    @IsNotEmpty()
-    incomeTypeId:number;
+  @IsNumber()
+  @IsNotEmpty()
+  incomeTypeId: number;
 
-    @IsString()
-    @IsNotEmpty()
-    lionYear:string;
+  @IsString()
+  @IsNotEmpty()
+  lionYear: string;
 
-    @IsNumber()
-    @IsNotEmpty()
-    amount:number;
+  @IsNumber()
+  @IsNotEmpty()
+  amount: number;
 
-    @IsString()
-    @IsOptional()
-    notes?: string;
-
+  @IsString()
+  @IsOptional()
+  notes?: string;
 }
 
 export class EditIncomeDto {
-    @IsString()
-    @IsOptional()
-    lionYear?:string;
+  @IsString()
+  @IsOptional()
+  lionYear?: string;
 
-    @IsNumber()
-    @IsOptional()
-    amount?:number;
+  @IsNumber()
+  @IsOptional()
+  amount?: number;
 
-    @IsString()
-    @IsOptional()
-    notes?: string;
+  @IsString()
+  @IsOptional()
+  notes?: string;
 }

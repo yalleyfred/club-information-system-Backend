@@ -39,17 +39,6 @@ model UserVerification {
   @@map("userVerification")
 }
 
-model DuesType {
-  id        Int       @id @default(autoincrement())
-  name      String
-  dues      Due[]
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
-  deletedAt DateTime?
-
-  @@map("duesTypes")
-}
-
 enum AccountType {
   ADMINISTRATION
   ACTIVITY
@@ -178,6 +167,16 @@ model DropedMember {
   deletedAt     DateTime?
 
   @@map("dropedMembers")
+}
+model DuesType {
+  id        Int       @id @default(autoincrement())
+  name      String
+  dues      Due[]
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  deletedAt DateTime?
+
+  @@map("duesTypes")
 }
 
 model Due {

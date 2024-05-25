@@ -1,4 +1,12 @@
-import { IsBoolean, IsEmail, IsNotEmpty, IsNumber, IsOptional, IsString, isNumber } from 'class-validator';
+import {
+  IsBoolean,
+  IsEmail,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  isNumber,
+} from 'class-validator';
 
 export class createMemberDto {
   @IsString()
@@ -7,7 +15,7 @@ export class createMemberDto {
 
   @IsString()
   @IsNotEmpty()
-  lionMemberId:string;
+  lionMemberId: string;
 
   @IsEmail()
   @IsNotEmpty()
@@ -23,7 +31,7 @@ export class createMemberDto {
 
   @IsBoolean()
   @IsOptional()
-  active?:boolean;
+  active?: boolean;
 }
 
 export class CreateNewMemberDto {
@@ -63,5 +71,5 @@ export class EditMemberDto {
 
   @IsBoolean()
   @IsOptional()
-  active?:boolean;
+  active?: boolean;
 }

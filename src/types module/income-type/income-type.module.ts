@@ -4,6 +4,6 @@ import { IncomeTypeService } from './income-type.service';
 
 @Module({
   controllers: [IncomeTypeController],
-  providers: [IncomeTypeService]
+  providers: [IncomeTypeService],
 })
 export class IncomeTypeModule {}

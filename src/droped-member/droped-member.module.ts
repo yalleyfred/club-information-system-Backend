@@ -4,6 +4,6 @@ import { DropedMemberService } from './droped-member.service';
 
 @Module({
   controllers: [DropedMemberController],
-  providers: [DropedMemberService]
+  providers: [DropedMemberService],
 })
 export class DropedMemberModule {}

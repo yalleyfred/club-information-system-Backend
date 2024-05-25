@@ -4,6 +4,6 @@ import { ActiveMemberController } from './active-member.controller';
 
 @Module({
   providers: [ActiveMemberService],
-  controllers: [ActiveMemberController]
+  controllers: [ActiveMemberController],
 })
 export class ActiveMemberModule {}

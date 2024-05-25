@@ -22,7 +22,6 @@ import { DropedMemberModule } from './droped-member/droped-member.module';
 import { ActiveMemberModule } from './active-member/active-member.module';
 import { AccountModule } from './account/account.module';
 
-
 @Module({
   imports: [
     ConfigModule.forRoot({
@@ -55,7 +54,6 @@ import { AccountModule } from './account/account.module';
     ActiveMemberModule,
 
     AccountModule,
-
   ],
   controllers: [AppController],
   providers: [AppService],

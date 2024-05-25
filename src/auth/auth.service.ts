@@ -13,10 +13,10 @@ export class AuthService {
     private prisma: PrismaService,
     private jwt: JwtService,
     private config: ConfigService,
-    private mailService: MailService,
+    private mailService: MailService
   ) {}
 
-  async signToken(userId: number, email: string): Promise<{ access_token: string }> {
+  public async signToken(userId: number, email: string): Promise<{ access_token: string }> {
     const payload = {
       sub: userId,
       email,
@@ -35,121 +35,113 @@ export class AuthService {
     };
   }
 
-  // Create Users ie. club account
-  async signUp(dto: SignUpDto) {
+  public async signUp(dto: SignUpDto) {
     try {
       const existingUser = await this.prisma.user.findFirst({
         where: {
           name: dto.name,
-          clubId: dto.clubId
+          clubId: dto.clubId,
         },
       });
 
       if (existingUser) throw new HttpException('User Already exist', 400);
       const hashPassword = await argon.hash(dto.password);
-      
+
       const user = await this.prisma.user.create({
         data: {
           ...dto,
-          password: hashPassword
+          password: hashPassword,
         },
       });
       const token = await this.signToken(user.id, user.email);
-      
-      
+
       await this.prisma.userVerification.create({
         data: {
           userId: user.id,
           token: token.access_token,
         },
       });
-      
+
       const frontendUrl = 'http://localhost:1000/setPassword';
       const url = `${frontendUrl}?id=${user.id}&token=${token.access_token}`;
-      
+
       const temp = '../templates/setPassword';
       const subject = 'Set Password';
       const context = {
-        // ✏️ filling curly brackets with content
         name: dto.name,
         email: dto.email,
         url: url,
       };
       // await this.mailService.sendUserMail(user.email, subject, temp, context);
-      
+
       return user;
     } catch (error) {
       throw error;
     }
   }
 
-
-  async signUpAdmin(adminId:number, adminRole:Role, dto: SignUpDto) {
+  public async signUpAdmin(adminId: number, adminRole: Role, dto: SignUpDto) {
     try {
-    
-    const existingAdmin = await this.prisma.user.findFirst({
-      where: {
-        id: adminId,
-        role: adminRole
-      }
-    });
+      const existingAdmin = await this.prisma.user.findFirst({
+        where: {
+          id: adminId,
+          role: adminRole,
+        },
+      });
 
-    if(!existingAdmin || existingAdmin.role !== 'ADMIN') throw new HttpException("Access to resource denied", 401);
+      if (!existingAdmin || existingAdmin.role !== 'ADMIN')
+        throw new HttpException('Access to resource denied', 401);
 
-    const existingAdminWithMail = await this.prisma.user.findUnique({
-      where: {
-        email:dto.email
-        
-      }
-    })
+      const existingAdminWithMail = await this.prisma.user.findUnique({
+        where: {
+          email: dto.email,
+        },
+      });
 
-    if(existingAdminWithMail) throw new HttpException("Administrator already exist", 400);
+      if (existingAdminWithMail) throw new HttpException('Administrator already exist', 400);
 
-    const existingAdminWithClubId = await this.prisma.user.findUnique({
-      where: {
-        clubId:dto.clubId
-        
-      }
-    })
+      const existingAdminWithClubId = await this.prisma.user.findUnique({
+        where: {
+          clubId: dto.clubId,
+        },
+      });
 
-    if(existingAdminWithClubId) throw new HttpException("Administrator already exist", 400);
+      if (existingAdminWithClubId) throw new HttpException('Administrator already exist', 400);
 
-    const admin = await this.prisma.user.create({
-      data: {
-        ...dto
-      }
-    });
+      const admin = await this.prisma.user.create({
+        data: {
+          ...dto,
+        },
+      });
 
-    const token = await this.signToken(admin.id, admin.email);
-      
-      
+      const token = await this.signToken(admin.id, admin.email);
+
       await this.prisma.userVerification.create({
         data: {
           userId: admin.id,
           token: token.access_token,
         },
       });
-      
+
       const frontendUrl = 'http://localhost:1000/setPassword';
       const url = `${frontendUrl}?id=${admin.id}&token=${token.access_token}`;
-      
+
       const temp = '../templates/setPassword';
       const subject = 'Set Password';
       const context = {
-        // ✏️ filling curly brackets with content
         name: dto.name,
         email: dto.email,
         url: url,
       };
-      // await this.mailService.sendUserMail(admin, subject, temp, context);
-      return 'Success'
 
-    }catch(error) {
-      throw error
+      // await this.mailService.sendUserMail(admin, subject, temp, context);
+      return 'Success';
+    } catch (error) {
+      throw error;
     }
   }
 
-  async signIn(dto: SignInDto) {
+  public async signIn(dto: SignInDto) {
     try {
       const user = await this.prisma.user.findUnique({
         where: {
@@ -169,7 +161,7 @@ export class AuthService {
     }
   }
 
-  async setPassword(dto: SetPasswordDto, userId: number, token: string) {
+  public async setPassword(dto: SetPasswordDto, userId: number, token: string) {
     try {
       const verifyUser = await this.prisma.userVerification.findUnique({
         where: {

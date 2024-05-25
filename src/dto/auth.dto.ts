@@ -16,14 +16,11 @@ export class SignUpDto {
 
   @IsNotEmpty()
   @IsString()
-  clubId:string;
+  clubId: string;
 
   @IsOptional()
-  role?:Role
-
-  
+  role?: Role;
 }
-
 
 export class SignInDto {
   @IsString()

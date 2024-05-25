@@ -23,34 +23,34 @@ export class MemberController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  createMember(@Body() dto: createMemberDto, @GetUser('id') userId: number) {
+  public createMember(@Body() dto: createMemberDto, @GetUser('id') userId: number) {
     return this.memberService.createMember(dto, userId);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get()
-  getMembers(@GetUser('id') userId: number) {
+  public getMembers(@GetUser('id') userId: number) {
     return this.memberService.getMembers(userId);
   }
 
   @HttpCode(HttpStatus.OK)
   @Get(':id')
-  getMember(@GetUser('id') userId: number, @Param('id', ParseIntPipe) memberId: number) {
+  public getMember(@GetUser('id') userId: number, @Param('id', ParseIntPipe) memberId: number) {
     return this.memberService.getMember(userId, memberId);
   }
 
   @HttpCode(HttpStatus.OK)
   @Patch(':id')
-  editMember(
+  public editMember(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) memberId: number,
-    @Body() dto: EditMemberDto,
+    @Body() dto: EditMemberDto
   ) {
     return this.memberService.editMember(userId, memberId, dto);
   }
 
   @Delete(':id')
-  dropMemeber(@GetUser('id') userId: number, @Param('id', ParseIntPipe) memberId: number) {
+  public dropMemeber(@GetUser('id') userId: number, @Param('id', ParseIntPipe) memberId: number) {
     return this.memberService.dropMember(userId, memberId);
   }
 }

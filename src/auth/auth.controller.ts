@@ -19,28 +19,32 @@ export class AuthController {
   constructor(private authService: AuthService) {}
 
   @Post('signup')
-  signUp(@Body() dto: SignUpDto) {
+  public signUp(@Body() dto: SignUpDto) {
     return this.authService.signUp(dto);
   }
 
   @UseGuards(JwtGuard)
   @Post('admin')
-  signUpAdmin(@GetUser('id') adminId:number, @GetUser('role') adminRole:Role, @Body() dto: SignUpDto) {
+  public signUpAdmin(
+    @GetUser('id') adminId: number,
+    @GetUser('role') adminRole: Role,
+    @Body() dto: SignUpDto
+  ) {
     return this.authService.signUpAdmin(adminId, adminRole, dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() dto: SignInDto) {
+  public signIn(@Body() dto: SignInDto) {
     return this.authService.signIn(dto);
   }
 
   @HttpCode(HttpStatus.OK)
   @Post('setPassword')
-  setPassword(
+  public setPassword(
     @Query('id', ParseIntPipe) userId: number,
     @Body() dto: SetPasswordDto,
-    @Query('token') token: string,
+    @Query('token') token: string
   ) {
     return this.authService.setPassword(dto, userId, token);
   }

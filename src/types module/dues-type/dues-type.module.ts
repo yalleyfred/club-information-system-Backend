@@ -4,6 +4,6 @@ import { DuesTypeService } from './dues-type.service';
 
 @Module({
   controllers: [DuesTypeController],
-  providers: [DuesTypeService]
+  providers: [DuesTypeService],
 })
 export class DuesTypeModule {}
