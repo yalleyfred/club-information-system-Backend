@@ -3,31 +3,31 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateDropedMemberDto {
   @IsString()
   @IsNotEmpty()
-  lionYear: string;
+  public lionYear: string;
 
   @IsString()
   @IsNotEmpty()
-  dropedDate: string;
+  public dropedDate: string;
 
   @IsString()
   @IsOptional()
-  activatedDate?: string;
+  public activatedDate?: string;
 
   @IsNumber()
   @IsNotEmpty()
-  memberId: number;
+  public memberId: number;
 }
 
 export class EditDropedMemberDto {
   @IsString()
   @IsOptional()
-  lionYear?: string;
+  public lionYear?: string;
 
   @IsString()
   @IsOptional()
-  dropedDate?: string;
+  public dropedDate?: string;
 
   @IsString()
   @IsOptional()
-  activatedDate?: string;
+  public activatedDate?: string;
 }

@@ -3,17 +3,17 @@ import { Month } from '@prisma/client';
 export class CreateActiveMemberDto {
   @IsString()
   @IsNotEmpty()
-  lionYear: string;
+  public lionYear: string;
 
   @IsNotEmpty()
-  month: Month;
+  public month: Month;
 }
 
 export class EditActiveMemberDto {
   @IsString()
   @IsOptional()
-  lionYear?: string;
+  public lionYear?: string;
 
   @IsOptional()
-  month?: Month;
+  public month?: Month;
 }

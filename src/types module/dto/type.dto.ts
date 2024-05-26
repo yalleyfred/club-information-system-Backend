@@ -1,31 +1,31 @@
 import { AccountType } from '@prisma/client';
-import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class CreateTypeDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 }
 
 export class EditTypeDto {
   @IsString()
-  name: string;
+  public name: string;
 }
 
 export class CreateItemTypeDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 
   @IsNotEmpty()
-  type: AccountType;
+  public type: AccountType;
 }
 
 export class EditItemTypeDto {
   @IsString()
   @IsOptional()
-  name?: string;
+  public name?: string;
 
   @IsOptional()
-  type?: AccountType;
+  public type?: AccountType;
 }

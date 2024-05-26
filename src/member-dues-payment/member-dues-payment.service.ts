@@ -1,52 +1,36 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { CreateMemberDuesPayment, EditMemberDuesPayment } from './dto/member-dues-payment.dto';
-import { MemberDuesPayment } from 'prisma';
+import { MemberDuesPaymentDataAccessService } from './member-dues-payment-data-access.service';
 
 @Injectable()
 export class MemberDuesPaymentService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private readonly memberDuesPaymentDataAccessService: MemberDuesPaymentDataAccessService
+  ) {}
 
   public async createMemberDuesPayment(userId: number, dto: CreateMemberDuesPayment) {
     try {
-      return await this.prisma.memberDuesPayment.create({
-        data: {
-          memberId: dto.memberId,
-          lionYear: dto.lionYear,
-          duesId: dto.duesId,
-          amount: dto.amount,
-          userId,
-        },
-      });
+      return await this.memberDuesPaymentDataAccessService.createMemberDuesPayment(userId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async getMemberDuesPayment(userId: number) {
+  public async getAllMemberDuesPaymentPerYear(userId: number, year: string) {
     try {
-      return await this.prisma.memberDuesPayment.findMany();
+      return await this.memberDuesPaymentDataAccessService.findManyByYear(userId, year);
     } catch (error) {
       throw error;
     }
   }
 
-  public async getMemberDuesPaymentById(userId: number, paymentId: number) {
+  public async getMemberDuesPaymentByMemberId(userId: number, memberId: number, year: string) {
     try {
-      const payment: MemberDuesPayment = await this.prisma.memberDuesPayment.findFirst({
-        where: {
-          id: paymentId,
-          userId,
-        },
-      });
-
-      if (!payment) throw new NotFoundException();
-
-      return await this.prisma.memberDuesPayment.findUnique({
-        where: {
-          id: paymentId,
-        },
-      });
+      return await this.memberDuesPaymentDataAccessService.findPaymentsByMemberId(
+        userId,
+        memberId,
+        year
+      );
     } catch (error) {
       throw error;
     }
@@ -55,47 +39,36 @@ export class MemberDuesPaymentService {
   public async updateMemberDuesPayment(
     userId: number,
     paymentId: number,
+    memberId: number,
+    year: string,
     dto: EditMemberDuesPayment
   ) {
     try {
-      const payment: MemberDuesPayment = await this.prisma.memberDuesPayment.findFirst({
-        where: {
-          id: paymentId,
-          userId,
-        },
-      });
-
-      if (!payment) throw new NotFoundException();
-
-      return await this.prisma.memberDuesPayment.update({
-        data: {
-          ...dto,
-        },
-        where: {
-          id: paymentId,
-        },
-      });
+      return await this.memberDuesPaymentDataAccessService.updatePaymentByMemberId(
+        userId,
+        memberId,
+        paymentId,
+        year,
+        dto
+      );
     } catch (error) {
       throw error;
     }
   }
 
-  public async removeMemberDuesPayment(userId: number, paymentId: number) {
+  public async removeMemberDuesPayment(
+    userId: number,
+    paymentId: number,
+    memberId: number,
+    year: string
+  ) {
     try {
-      const payment: MemberDuesPayment = await this.prisma.memberDuesPayment.findFirst({
-        where: {
-          id: paymentId,
-          userId,
-        },
-      });
-
-      if (!payment) throw new NotFoundException();
-
-      await this.prisma.memberDuesPayment.delete({
-        where: {
-          id: paymentId,
-        },
-      });
+      await this.memberDuesPaymentDataAccessService.removePaymentByPaymentId(
+        userId,
+        paymentId,
+        memberId,
+        year
+      );
 
       return;
     } catch (error) {

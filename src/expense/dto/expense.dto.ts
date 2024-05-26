@@ -3,31 +3,31 @@ import { IsNotEmpty, IsString, IsNumber, IsOptional } from 'class-validator';
 export class CreateExpenseDto {
   @IsNumber()
   @IsNotEmpty()
-  expenseTypeId: number;
+  public expenseTypeId: number;
 
   @IsString()
   @IsNotEmpty()
-  lionYear: string;
+  public lionYear: string;
 
   @IsNumber()
   @IsNotEmpty()
-  amount: number;
+  public amount: number;
 
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 }
 
 export class EditExpenseDto {
   @IsString()
   @IsOptional()
-  lionYear?: string;
+  public lionYear?: string;
 
   @IsNumber()
   @IsOptional()
-  amount?: number;
+  public amount?: number;
 
   @IsString()
   @IsOptional()
-  notes?: string;
+  public notes?: string;
 }

@@ -1,75 +1,67 @@
-import {
-  IsBoolean,
-  IsEmail,
-  IsNotEmpty,
-  IsNumber,
-  IsOptional,
-  IsString,
-  isNumber,
-} from 'class-validator';
+import { IsBoolean, IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 
 export class createMemberDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 
   @IsString()
   @IsNotEmpty()
-  lionMemberId: string;
+  public lionMemberId: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  public email: string;
 
   @IsString()
   @IsNotEmpty()
-  phone: string;
+  public phone: string;
 
   @IsString()
   @IsNotEmpty()
-  position: string;
+  public position: string;
 
   @IsBoolean()
   @IsOptional()
-  active?: boolean;
+  public active?: boolean;
 }
 
 export class CreateNewMemberDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  public email: string;
 
   @IsString()
   @IsNotEmpty()
-  phone: string;
+  public phone: string;
 
   @IsString()
   @IsNotEmpty()
-  position: string;
+  public position: string;
 }
 
 export class EditMemberDto {
   @IsString()
   @IsOptional()
-  name?: string;
+  public name?: string;
 
   @IsEmail()
   @IsOptional()
-  email?: string;
+  public email?: string;
 
   @IsString()
   @IsOptional()
-  phone?: string;
+  public phone?: string;
 
   @IsString()
   @IsOptional()
-  position?: string;
+  public position?: string;
 
   @IsBoolean()
   @IsOptional()
-  active?: boolean;
+  public active?: boolean;
 }

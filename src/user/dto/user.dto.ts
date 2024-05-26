@@ -4,25 +4,25 @@ import { IsEmail, IsOptional, IsString } from 'class-validator';
 export class UpdateUserDto {
   @IsString()
   @IsOptional()
-  name: string;
+  public name: string;
 
   @IsString()
   @IsOptional()
-  clubId: string;
+  public clubId: string;
 
   @IsEmail()
   @IsOptional()
-  email: string;
+  public email: string;
 
   @IsString()
   @IsOptional()
-  profile: string;
+  public profile: string;
 
   @IsString()
   @IsOptional()
-  location: string;
+  public location: string;
 
   @IsString()
   @IsOptional()
-  role: Role;
+  public role: Role;
 }

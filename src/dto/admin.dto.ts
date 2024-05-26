@@ -3,13 +3,13 @@ import { IsEmail, IsNotEmpty, IsString } from 'class-validator';
 export class CreateAdminDto {
   @IsString()
   @IsNotEmpty()
-  name: string;
+  public name: string;
 
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  public email: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  public password: string;
 }

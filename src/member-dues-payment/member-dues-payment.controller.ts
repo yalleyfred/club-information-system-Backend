@@ -8,10 +8,15 @@ import {
   Delete,
   ParseIntPipe,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { MemberDuesPaymentService } from './member-dues-payment.service';
 import { GetUser } from 'src/auth/decorator';
-import { CreateMemberDuesPayment, EditMemberDuesPayment } from './dto/member-dues-payment.dto';
+import {
+  CreateMemberDuesPayment,
+  EditMemberDuesPayment,
+  GetPaymentQuery,
+} from './dto/member-dues-payment.dto';
 import { JwtGuard } from 'src/auth/guard';
 
 @UseGuards(JwtGuard)
@@ -27,33 +32,50 @@ export class MemberDuesPaymentController {
     return this.memberDuesPaymentService.createMemberDuesPayment(userId, dto);
   }
 
-  @Get()
-  public getMemberDuesPayment(@GetUser('id') userId: number) {
-    return this.memberDuesPaymentService.getMemberDuesPayment(userId);
+  @Get('year')
+  public getAllMemberDuesPaymentPerYear(
+    @GetUser('id') userId: number,
+    @Param('year', ParseIntPipe) year: string
+  ) {
+    return this.memberDuesPaymentService.getAllMemberDuesPaymentPerYear(userId, year);
   }
 
   @Get(':id')
-  public getMemberDuesPaymentById(
+  public getMemberDuesPaymentByMemberId(
     @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) paymentId: number
+    @Param('id', ParseIntPipe) memberId: number,
+    @Query('year') year: string
   ) {
-    return this.memberDuesPaymentService.getMemberDuesPaymentById(userId, paymentId);
+    return this.memberDuesPaymentService.getMemberDuesPaymentByMemberId(userId, memberId, year);
   }
 
   @Patch(':id')
   public updateMemberDuesPaymentById(
     @GetUser('id') userId: number,
     @Param('id', ParseIntPipe) paymentId: number,
-    @Body() dto: EditMemberDuesPayment
+    @Body() dto: EditMemberDuesPayment,
+    @Query() query: GetPaymentQuery
   ) {
-    return this.memberDuesPaymentService.updateMemberDuesPayment(userId, paymentId, dto);
+    return this.memberDuesPaymentService.updateMemberDuesPayment(
+      userId,
+      query.memberId,
+      paymentId,
+      query.year,
+      dto
+    );
   }
 
   @Delete(':id')
   public removeMemberDuesPaymentById(
     @GetUser('id') userId: number,
-    @Param('id', ParseIntPipe) paymentId: number
+    @Param('id', ParseIntPipe) paymentId: number,
+    @Query() query: GetPaymentQuery
   ) {
-    return this.memberDuesPaymentService.removeMemberDuesPayment(userId, paymentId);
+    return this.memberDuesPaymentService.removeMemberDuesPayment(
+      userId,
+      paymentId,
+      query.memberId,
+      query.year
+    );
   }
 }

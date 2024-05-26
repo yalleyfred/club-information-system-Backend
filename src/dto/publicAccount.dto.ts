@@ -3,47 +3,47 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreatePublicAccountDto {
   @IsString()
   @IsOptional()
-  name?: string;
+  public name?: string;
 
   @IsNumber()
   @IsNotEmpty()
-  opening: number;
+  public opening: number;
 
   @IsNumber()
   @IsOptional()
-  contribution?: number;
+  public contribution?: number;
 
   @IsNumber()
   @IsOptional()
-  donation?: number;
+  public donation?: number;
 
   @IsNumber()
   @IsOptional()
-  expenses?: number;
+  public expenses?: number;
 
   @IsNumber()
   @IsOptional()
-  activityExpense?: number;
+  public activityExpense?: number;
 
   @IsNumber()
   @IsNotEmpty()
-  closing: number;
+  public closing: number;
 }
 
 export class EditPublicAccountDto {
   @IsNumber()
   @IsOptional()
-  contribution?: number;
+  public contribution?: number;
 
   @IsNumber()
   @IsOptional()
-  donation?: number;
+  public donation?: number;
 
   @IsNumber()
   @IsOptional()
-  expenses?: number;
+  public expenses?: number;
 
   @IsNumber()
   @IsOptional()
-  activityExpense?: number;
+  public activityExpense?: number;
 }

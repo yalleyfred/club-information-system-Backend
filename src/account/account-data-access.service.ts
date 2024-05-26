@@ -3,10 +3,11 @@ import { AccountType } from '@prisma/client';
 import { PrismaService } from 'src/prisma/prisma.service';
 interface DuesQueryResult {
   amount: number;
-  dues: {
-    duesType: {
-      name: string;
-    };
+  duesType: {
+    name: string;
+    dues: {
+      amount: string;
+    }[];
   };
 }
 
@@ -43,12 +44,14 @@ export class AccountDataAccessService {
           select: {
             lionYear: true,
             amount: true,
-            dues: {
+            duesTypeId: true,
+            duesType: {
               select: {
-                amount: true,
-                duesType: {
+                id: true,
+                name: true,
+                dues: {
                   select: {
-                    name: true,
+                    amount: true,
                   },
                 },
               },
@@ -62,15 +65,19 @@ export class AccountDataAccessService {
     const memberDuesPaymentPerYearMap = memberDuesPayment
       .filter((payment) => payment.lionYear === year)
       .reduce((acc, curr) => {
-        const duesTypeName = curr.dues?.duesType?.name;
+        const duesTypeName = curr.duesType?.name;
 
         if (duesTypeName) {
           if (acc[duesTypeName]) {
             acc[duesTypeName] = acc[duesTypeName] + curr.amount;
-            acc[duesTypeName + ' perMonth'] = curr.dues.amount;
+            acc[duesTypeName + ' perMonth'] = curr.duesType.dues.find((dues) => {
+              if (curr.duesTypeId === curr.duesType.id) return dues.amount;
+            });
           } else {
             acc[duesTypeName] = curr.amount;
-            acc[duesTypeName + ' perMonth'] = curr.dues.amount;
+            acc[duesTypeName + ' perMonth'] = curr.duesType.dues.find((dues) => {
+              if (curr.duesTypeId === curr.duesType.id) return dues.amount;
+            });
           }
         }
         return acc;
@@ -88,7 +95,7 @@ export class AccountDataAccessService {
       const allduesTypePayment = await this.getAllDuesTypeNameAndPayments(userId, year);
 
       const duesTypePaymentsMap = allduesTypePayment.reduce((acc, curr) => {
-        const duesTypeName = curr.dues?.duesType?.name;
+        const duesTypeName = curr.duesType?.name;
 
         if (duesTypeName) {
           if (acc[duesTypeName]) {
@@ -176,19 +183,17 @@ export class AccountDataAccessService {
     }
   }
 
-  private async getAllDuesTypeNameAndPayments(
-    userId: number,
-    year: string
-  ): Promise<DuesQueryResult[]> {
+  private async getAllDuesTypeNameAndPayments(userId: number, year: string) {
     return await this.prisma.memberDuesPayment.findMany({
       where: { userId, lionYear: year, deletedAt: null },
       select: {
         amount: true,
-        dues: {
+        duesType: {
           select: {
-            duesType: {
+            name: true,
+            dues: {
               select: {
-                name: true,
+                amount: true,
               },
             },
           },

@@ -1,97 +1,47 @@
-import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { Injectable } from '@nestjs/common';
 import { CreateDuesDto, EditDuesDto } from './dto/dues.dto';
 import { Due } from 'prisma';
+import { DuesDataAccessService } from './dues-data-access.service';
 
 @Injectable()
 export class DuesService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly duesDataAccessService: DuesDataAccessService) {}
 
-  public async createDues(userId: number, dto: CreateDuesDto) {
+  public async createDues(userId: number, dto: CreateDuesDto): Promise<Due> {
     try {
-      const existingDues: Due = await this.prisma.due.findFirst({
-        where: { duesTypeId: dto.duesTypeId },
-      });
-
-      if (existingDues) throw new HttpException('Dues already exist', 400);
-
-      return await this.prisma.due.create({
-        data: {
-          lionYear: dto.lionYear,
-          amount: dto.amount,
-          duesTypeId: dto.duesTypeId,
-          userId,
-        },
-      });
+      return await this.duesDataAccessService.createDues(userId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async getDues(userId: number) {
+  public async getDues(userId: number): Promise<Due[]> {
     try {
-      return await this.prisma.due.findMany();
+      return await this.duesDataAccessService.getAllDues(userId);
     } catch (error) {
       throw error;
     }
   }
 
-  public async getDuesById(userId: number, duesId: number) {
+  public async getDuesById(userId: number, duesId: number): Promise<Due> {
     try {
-      const dues: Due = await this.prisma.due.findFirst({
-        where: {
-          id: duesId,
-          userId,
-        },
-      });
-
-      if (!dues) throw new NotFoundException();
-      return dues;
+      return await this.duesDataAccessService.getDues(userId, duesId);
     } catch (error) {
       throw error;
     }
   }
 
-  public async updateDues(userId: number, duesId: number, dto: EditDuesDto) {
+  public async updateDues(userId: number, duesId: number, dto: EditDuesDto): Promise<Due> {
     try {
-      const dues: Due = await this.prisma.due.findFirst({
-        where: {
-          id: duesId,
-          userId,
-        },
-      });
-
-      if (!dues) throw new NotFoundException();
-
-      return await this.prisma.due.update({
-        data: {
-          ...dto,
-        },
-        where: {
-          id: duesId,
-        },
-      });
+      return await this.duesDataAccessService.updateDues(userId, duesId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async removeDues(userId: number, duesId: number) {
+  public async removeDues(userId: number, duesId: number): Promise<Due> {
     try {
-      const dues: Due = await this.prisma.due.findFirst({
-        where: {
-          id: duesId,
-          userId,
-        },
-      });
-
-      if (!dues) throw new NotFoundException();
-
-      await this.prisma.due.delete({
-        where: {
-          id: duesId,
-        },
-      });
+      await this.duesDataAccessService.removeDues(userId, duesId);
 
       return;
     } catch (error) {

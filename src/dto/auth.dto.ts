@@ -4,40 +4,40 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString } from 'class-validator';
 export class SignUpDto {
   @IsEmail()
   @IsNotEmpty()
-  email: string;
+  public email: string;
 
   @IsString()
   @IsOptional()
-  password?: string;
+  public password?: string;
 
   @IsNotEmpty()
   @IsString()
-  name: string;
+  public name: string;
 
   @IsNotEmpty()
   @IsString()
-  clubId: string;
+  public clubId: string;
 
   @IsOptional()
-  role?: Role;
+  public role?: Role;
 }
 
 export class SignInDto {
   @IsString()
   @IsNotEmpty()
-  email: string;
+  public email: string;
 
   @IsString()
   @IsNotEmpty()
-  password: string;
+  public password: string;
 }
 
 export class SetPasswordDto {
   @IsString()
   @IsNotEmpty()
-  password: string;
+  public password: string;
 
   @IsString()
   @IsNotEmpty()
-  confirmPassword: string;
+  public confirmPassword: string;
 }

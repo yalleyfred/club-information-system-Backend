@@ -1,37 +1,46 @@
 import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
+export class GetPaymentQuery {
+  @IsString()
+  @IsNotEmpty()
+  public year: string;
+
+  @IsNumber()
+  @IsNotEmpty()
+  public memberId: number;
+}
 export class CreateMemberDuesPayment {
   @IsString()
   @IsNotEmpty()
-  lionYear: string;
+  public lionYear: string;
 
   @IsNumber()
   @IsNotEmpty()
-  memberId: number;
+  public memberId: number;
 
   @IsNumber()
   @IsNotEmpty()
-  duesId: number;
+  public duesTypeId: number;
 
   @IsNumber()
   @IsNotEmpty()
-  amount: number;
+  public amount: number;
 }
 
 export class EditMemberDuesPayment {
   @IsString()
   @IsOptional()
-  lionYear?: string;
+  public lionYear?: string;
 
   @IsNumber()
   @IsOptional()
-  memberId?: number;
+  public memberId?: number;
 
   @IsNumber()
   @IsOptional()
-  duesId?: number;
+  public duesId?: number;
 
   @IsNumber()
   @IsOptional()
-  amount?: number;
+  public amount?: number;
 }

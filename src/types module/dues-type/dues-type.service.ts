@@ -1,130 +1,46 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateTypeDto, EditTypeDto } from 'src/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { DuesTypeAccessService } from './dues-type-data-access.service';
 
 @Injectable()
 export class DuesTypeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private duesTypeAccessService: DuesTypeAccessService
+  ) {}
 
-  public async createDuesType(adminId: number, dto: CreateTypeDto) {
+  public async createDuesType(userId: number, dto: CreateTypeDto) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const duesType = await this.prisma.duesType.findFirst({
-        where: {
-          name: dto.name,
-        },
-      });
-
-      if (duesType) throw new HttpException('This type of dues already exist', 400);
-
-      return await this.prisma.duesType.create({
-        data: {
-          ...dto,
-        },
-      });
+      return await this.duesTypeAccessService.createDuesType(userId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async getDuesType(adminId: number, duesId: number) {
+  public async getDuesType(adminId: number, duesTypeId: number) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      return await this.prisma.duesType.findFirst({
-        where: {
-          id: duesId,
-        },
-      });
+      return await this.duesTypeAccessService.getDuesTypeById(adminId, duesTypeId);
     } catch (error) {
       throw error;
     }
   }
 
   public async getDues(adminId: number) {
-    const admin = await this.prisma.user.findUnique({
-      where: {
-        id: adminId,
-      },
-    });
-
-    if (!admin || admin.role !== 'ADMIN') throw new HttpException('Access to resource denied', 401);
-
-    return await this.prisma.duesType.findMany();
+    return await this.duesTypeAccessService.getAllDues(adminId);
   }
 
-  public async editDuesType(adminId: number, duesId: number, dto: EditTypeDto) {
+  public async editDuesType(adminId: number, duesTypeId: number, dto: EditTypeDto) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const duesType = await this.prisma.duesType.findFirst({
-        where: {
-          id: duesId,
-        },
-      });
-
-      if (!duesType) throw new HttpException('This type of dues does not exist', 400);
-
-      return await this.prisma.duesType.update({
-        data: {
-          ...dto,
-        },
-        where: {
-          id: duesId,
-        },
-      });
+      return await this.duesTypeAccessService.updateDuesType(adminId, duesTypeId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async removeDuesType(adminId: number, duesId: number) {
+  public async removeDuesType(adminId: number, duesTypeId: number) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const duesType = await this.prisma.duesType.findFirst({
-        where: {
-          id: duesId,
-        },
-      });
-
-      if (!duesType) throw new HttpException('This type of dues does not exist', 400);
-
-      await this.prisma.duesType.delete({
-        where: {
-          id: duesId,
-        },
-      });
-      return 'Success';
+      return this.duesTypeAccessService.removeDuesType(adminId, duesTypeId);
     } catch (error) {
       throw error;
     }

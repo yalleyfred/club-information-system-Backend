@@ -1,22 +1,14 @@
-import { Injectable, HttpException, ForbiddenException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateExpenseDto, EditExpenseDto } from './dto/expense.dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { ExpenseDataAccessService } from './expense-data-access.service';
 
 @Injectable()
 export class ExpenseService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly expenseDataAccessService: ExpenseDataAccessService) {}
 
   public async createExpense(userId: number, dto: CreateExpenseDto) {
     try {
-      return await this.prisma.expense.create({
-        data: {
-          lionYear: dto.lionYear,
-          amount: dto.amount,
-          notes: dto.notes,
-          expenseTypeId: dto.expenseTypeId,
-          userId,
-        },
-      });
+      return await this.expenseDataAccessService.createExpense(userId, dto);
     } catch (error) {
       throw error;
     }
@@ -24,16 +16,7 @@ export class ExpenseService {
 
   public async getExpenseById(userId: number, expenseId: number) {
     try {
-      const expense = await this.prisma.expense.findFirst({
-        where: {
-          id: expenseId,
-          userId: userId,
-        },
-      });
-
-      if (!expense) throw new HttpException('Expense does not exist', 404);
-
-      return expense;
+      return await this.expenseDataAccessService.getExpense(userId, expenseId);
     } catch (error) {
       throw error;
     }
@@ -41,11 +24,7 @@ export class ExpenseService {
 
   public async getAllExpense(userId: number) {
     try {
-      return await this.prisma.expense.findMany({
-        where: {
-          userId: userId,
-        },
-      });
+      return await this.expenseDataAccessService.getAllExpense(userId);
     } catch (error) {
       throw error;
     }
@@ -53,23 +32,7 @@ export class ExpenseService {
 
   public async editExpense(userId: number, expenseId: number, dto: EditExpenseDto) {
     try {
-      const expense = await this.prisma.expense.findUnique({
-        where: {
-          id: expenseId,
-        },
-      });
-
-      if (!expense || expense.userId !== userId)
-        throw new ForbiddenException('Access to resource denied');
-
-      return await this.prisma.expense.update({
-        where: {
-          id: expenseId,
-        },
-        data: {
-          ...dto,
-        },
-      });
+      return await this.expenseDataAccessService.updateExpense(userId, expenseId, dto);
     } catch (error) {
       throw error;
     }
@@ -77,20 +40,8 @@ export class ExpenseService {
 
   public async removeExpense(userId: number, expenseId: number) {
     try {
-      const expense = await this.prisma.expense.findUnique({
-        where: {
-          id: expenseId,
-        },
-      });
-
-      if (!expense || expense.userId !== userId)
-        throw new ForbiddenException('Access to resource denied');
-
-      await this.prisma.expense.delete({
-        where: {
-          id: expenseId,
-        },
-      });
+      await this.expenseDataAccessService.removeExpense(userId, expenseId);
+      return;
     } catch (error) {
       throw error;
     }

@@ -3,27 +3,27 @@ import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 export class CreateDuesDto {
   @IsString()
   @IsNotEmpty()
-  lionYear: string;
+  public lionYear: string;
 
   @IsNumber()
   @IsNotEmpty()
-  amount: number;
+  public amount: number;
 
   @IsNumber()
   @IsNotEmpty()
-  duesTypeId: number;
+  public duesTypeId: number;
 }
 
 export class EditDuesDto {
   @IsString()
   @IsOptional()
-  lionYear?: string;
+  public lionYear?: string;
 
   @IsNumber()
   @IsOptional()
-  amount?: number;
+  public amount?: number;
 
   @IsNumber()
   @IsOptional()
-  duesTypeId?: number;
+  public duesTypeId?: number;
 }

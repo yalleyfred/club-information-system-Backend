@@ -19,6 +19,9 @@ model User {
   income            Income[]
   memberDuesPayment MemberDuesPayment[]
   dues              Due[]
+  duesType          DuesType[] 
+  expenseType       ExpenseType[] 
+  incomeType        IncomeType[] 
   members           Member[]
   expense           Expense[]
   activeMembers     ActiveMember[]
@@ -53,6 +56,8 @@ model IncomeType {
   id        Int         @id @default(autoincrement())
   name      String
   type      AccountType
+  userId            Int
+  user              User                @relation(fields: [userId], references: [id])
   income    Income[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -65,6 +70,8 @@ model ExpenseType {
   id        Int         @id @default(autoincrement())
   name      String
   type      AccountType
+  userId            Int
+  user              User                @relation(fields: [userId], references: [id])
   expense   Expense[]
   createdAt DateTime    @default(now())
   updatedAt DateTime    @updatedAt
@@ -171,7 +178,10 @@ model DropedMember {
 model DuesType {
   id        Int       @id @default(autoincrement())
   name      String
+  userId            Int
+  user              User                @relation(fields: [userId], references: [id])
   dues      Due[]
+  memberDuesPayment MemberDuesPayment[]
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
   deletedAt DateTime?
@@ -187,7 +197,6 @@ model Due {
   duesType          DuesType            @relation(fields: [duesTypeId], references: [id])
   userId            Int
   user              User                @relation(fields: [userId], references: [id])
-  memberDuesPayment MemberDuesPayment[]
   createdAt         DateTime            @default(now())
   updatedAt         DateTime            @updatedAt
   deletedAt         DateTime?
@@ -200,8 +209,8 @@ model MemberDuesPayment {
   lionYear  String
   memberId  Int
   member    Member    @relation(fields: [memberId], references: [id])
-  duesId    Int
-  dues      Due       @relation(fields: [duesId], references: [id])
+  duesTypeId Int
+  duesType  DuesType       @relation(fields: [duesTypeId], references: [id])
   amount    Int
   userId    Int
   user      User      @relation(fields: [userId], references: [id])

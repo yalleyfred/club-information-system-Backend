@@ -1,130 +1,42 @@
-import { Injectable, HttpException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateItemTypeDto, EditItemTypeDto } from 'src/dto';
-import { PrismaService } from 'src/prisma/prisma.service';
+import { IncomeTypeAccessService } from './income-type-data-access.service';
 
 @Injectable()
 export class IncomeTypeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly incomeTypeAccessService: IncomeTypeAccessService) {}
 
   public async createIncomeType(adminId: number, dto: CreateItemTypeDto) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const incomeType = await this.prisma.incomeType.findFirst({
-        where: {
-          name: dto.name,
-        },
-      });
-
-      if (incomeType) throw new HttpException('This type of Income already exist', 400);
-
-      return await this.prisma.incomeType.create({
-        data: {
-          ...dto,
-        },
-      });
+      return await this.incomeTypeAccessService.createIncomeType(adminId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async getIncomeType(adminId: number, incomeId: number) {
+  public async getIncomeType(adminId: number, incomeTypeId: number) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      return await this.prisma.incomeType.findFirst({
-        where: {
-          id: incomeId,
-        },
-      });
+      return await this.incomeTypeAccessService.getIncomeTypeById(adminId, incomeTypeId);
     } catch (error) {
       throw error;
     }
   }
 
   public async getAllIncomeType(adminId: number) {
-    const admin = await this.prisma.user.findUnique({
-      where: {
-        id: adminId,
-      },
-    });
-
-    if (!admin || admin.role !== 'ADMIN') throw new HttpException('Access to resource denied', 401);
-
-    return await this.prisma.incomeType.findMany();
+    return await this.incomeTypeAccessService.getAllIncomeType(adminId);
   }
 
-  public async editIncomeType(adminId: number, incomeId: number, dto: EditItemTypeDto) {
+  public async editIncomeType(adminId: number, incomeTypeId: number, dto: EditItemTypeDto) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const incomeType = await this.prisma.incomeType.findFirst({
-        where: {
-          id: incomeId,
-        },
-      });
-
-      if (!incomeType) throw new HttpException('This type of Income does not exist', 400);
-
-      return await this.prisma.incomeType.update({
-        data: {
-          ...dto,
-        },
-        where: {
-          id: incomeId,
-        },
-      });
+      return await this.incomeTypeAccessService.updateIncomeType(adminId, incomeTypeId, dto);
     } catch (error) {
       throw error;
     }
   }
 
-  public async removeIncomeType(adminId: number, incomeId: number) {
+  public async removeIncomeType(adminId: number, incomeTypeId: number) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const incomeType = await this.prisma.incomeType.findFirst({
-        where: {
-          id: incomeId,
-        },
-      });
-
-      if (!incomeType) throw new HttpException('This type of Income does not exist', 400);
-
-      await this.prisma.incomeType.delete({
-        where: {
-          id: incomeId,
-        },
-      });
-      return 'Success';
+      return await this.incomeTypeAccessService.removeIncomeType(adminId, incomeTypeId);
     } catch (error) {
       throw error;
     }

@@ -23,17 +23,13 @@ export class DuesTypeController {
 
   @HttpCode(HttpStatus.CREATED)
   @Post()
-  public createDuesType(
-    @GetUser('id') adminId: number,
-    @Body() dto: CreateTypeDto,
-    @GetUser() user: object
-  ) {
+  public createDuesType(@GetUser('id') adminId: number, @Body() dto: CreateTypeDto) {
     return this.duesTypeService.createDuesType(adminId, dto);
   }
 
   @Get(':id')
-  public getDues(@GetUser('id') adminId: number, @Param('id', ParseIntPipe) duesId: number) {
-    return this.duesTypeService.getDuesType(adminId, duesId);
+  public getDues(@GetUser('id') adminId: number, @Param('id', ParseIntPipe) duesTypeId: number) {
+    return this.duesTypeService.getDuesType(adminId, duesTypeId);
   }
 
   @Get()
@@ -44,14 +40,17 @@ export class DuesTypeController {
   @Patch(':id')
   public editDuesType(
     @GetUser('id') adminId: number,
-    @Param('id', ParseIntPipe) duesId: number,
+    @Param('id', ParseIntPipe) duesTypeId: number,
     @Body() dto: EditTypeDto
   ) {
-    return this.duesTypeService.editDuesType(adminId, duesId, dto);
+    return this.duesTypeService.editDuesType(adminId, duesTypeId, dto);
   }
 
   @Delete(':id')
-  public removeDuesType(@GetUser('id') adminId: number, @Param('id', ParseIntPipe) duesId: number) {
-    return this.duesTypeService.removeDuesType(adminId, duesId);
+  public removeDuesType(
+    @GetUser('id') adminId: number,
+    @Param('id', ParseIntPipe) duesTypeId: number
+  ) {
+    return this.duesTypeService.removeDuesType(adminId, duesTypeId);
   }
 }

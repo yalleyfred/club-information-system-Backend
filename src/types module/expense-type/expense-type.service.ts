@@ -1,35 +1,18 @@
-import { HttpException, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { CreateItemTypeDto, EditItemTypeDto } from 'src/dto';
 import { PrismaService } from 'src/prisma/prisma.service';
+import { ExpenseTypeAccessService } from './expense-type-data-access.service';
 
 @Injectable()
 export class ExpenseTypeService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    private readonly expenseTypeAccessService: ExpenseTypeAccessService
+  ) {}
 
   public async createExpenseType(adminId: number, dto: CreateItemTypeDto) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const expenseType = await this.prisma.expenseType.findFirst({
-        where: {
-          name: dto.name,
-        },
-      });
-
-      if (expenseType) throw new HttpException('This type of expense already exist', 400);
-
-      return await this.prisma.expenseType.create({
-        data: {
-          ...dto,
-        },
-      });
+      return await this.expenseTypeAccessService.createExpenseType(adminId, dto);
     } catch (error) {
       throw error;
     }
@@ -37,64 +20,19 @@ export class ExpenseTypeService {
 
   public async getExpenseType(adminId: number, expenseId: number) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      return await this.prisma.expenseType.findFirst({
-        where: {
-          id: expenseId,
-        },
-      });
+      return await this.expenseTypeAccessService.getExpenseTypeById(adminId, expenseId);
     } catch (error) {
       throw error;
     }
   }
 
   public async getAllExpenseType(adminId: number) {
-    const admin = await this.prisma.user.findUnique({
-      where: {
-        id: adminId,
-      },
-    });
-
-    if (!admin || admin.role !== 'ADMIN') throw new HttpException('Access to resource denied', 401);
-
-    return await this.prisma.expenseType.findMany();
+    return await this.expenseTypeAccessService.getAllExpenseType(adminId);
   }
 
   public async editExpenseType(adminId: number, expenseId: number, dto: EditItemTypeDto) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const expenseType = await this.prisma.expenseType.findFirst({
-        where: {
-          id: expenseId,
-        },
-      });
-
-      if (!expenseType) throw new HttpException('This type of expense does not exist', 400);
-
-      return await this.prisma.expenseType.update({
-        data: {
-          ...dto,
-        },
-        where: {
-          id: expenseId,
-        },
-      });
+      return await this.expenseTypeAccessService.updateDuesType(adminId, expenseId, dto);
     } catch (error) {
       throw error;
     }
@@ -102,29 +40,7 @@ export class ExpenseTypeService {
 
   public async removeExpenseType(adminId: number, expenseId: number) {
     try {
-      const admin = await this.prisma.user.findUnique({
-        where: {
-          id: adminId,
-        },
-      });
-
-      if (!admin || admin.role !== 'ADMIN')
-        throw new HttpException('Access to resource denied', 401);
-
-      const expenseType = await this.prisma.expenseType.findFirst({
-        where: {
-          id: expenseId,
-        },
-      });
-
-      if (!expenseType) throw new HttpException('This type of expense does not exist', 400);
-
-      await this.prisma.expenseType.delete({
-        where: {
-          id: expenseId,
-        },
-      });
-      return 'Success';
+      return await this.expenseTypeAccessService.removeDuesType(adminId, expenseId);
     } catch (error) {
       throw error;
     }
