@@ -113,7 +113,7 @@ model Member {
   phone             String
   position          String
   active            Boolean             @default(true)
-  userId            Int
+  userId            Int                 
   user              User                @relation(fields: [userId], references: [id])
   dropMembers       DropedMember[]
   memberDuesPayment MemberDuesPayment[]
