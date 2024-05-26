@@ -1,41 +1,23 @@
 import { HttpException, Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { CreateDropedMemberDto, EditDropedMemberDto } from './dto/droped-member.dto';
 import { DropedMember } from 'prisma';
+import { DropedMemberDataAcessService } from './droped-member-data-access.service';
 
 @Injectable()
 export class DropedMemberService {
-  constructor(private prisma: PrismaService) {}
+  constructor(private readonly dropedMmemberDataAccessService: DropedMemberDataAcessService) {}
 
   public async createDropedMember(userId: number, dto: CreateDropedMemberDto) {
     try {
-      const alreadyDropped: DropedMember = await this.prisma.dropedMember.findFirst({
-        where: {
-          memberId: dto.memberId,
-          userId,
-        },
-      });
+      const { memberId } = dto;
+      const alreadyDropped: DropedMember =
+        await this.dropedMmemberDataAccessService.getDropedMemberByDropedId(userId, memberId);
 
       if (alreadyDropped) throw new HttpException('Member has already been dropped!', 400);
 
-      await this.prisma.member.update({
-        data: {
-          active: false,
-        },
-        where: {
-          id: dto.memberId,
-        },
-      });
+      await this.dropedMmemberDataAccessService.setMemberToDroped(memberId);
 
-      return await this.prisma.dropedMember.create({
-        data: {
-          lionYear: dto.lionYear,
-          dropedDate: dto.dropedDate,
-          activatedDate: dto.activatedDate,
-          memberId: dto.memberId,
-          userId,
-        },
-      });
+      return await this.dropedMmemberDataAccessService.createDropedMember(userId, dto);
     } catch (error) {
       throw error;
     }
@@ -43,12 +25,7 @@ export class DropedMemberService {
 
   public async getDropedMembers(userId: number) {
     try {
-      return await this.prisma.dropedMember.findMany({
-        where: {
-          deletedAt: null,
-          userId,
-        },
-      });
+      return await this.dropedMmemberDataAccessService.getAllDropedMembers(userId);
     } catch (error) {
       throw error;
     }
@@ -56,13 +33,8 @@ export class DropedMemberService {
 
   public async getDropedMemberById(userId: number, dropedId: number) {
     try {
-      const alreadyDropped: DropedMember = await this.prisma.dropedMember.findFirst({
-        where: {
-          id: dropedId,
-          userId,
-          deletedAt: null,
-        },
-      });
+      const alreadyDropped: DropedMember =
+        await this.dropedMmemberDataAccessService.getDropedMemberByDropedId(userId, dropedId);
 
       if (!alreadyDropped) throw new NotFoundException();
 
@@ -74,33 +46,16 @@ export class DropedMemberService {
 
   public async updateDropedMember(userId: number, dropedId: number, dto: EditDropedMemberDto) {
     try {
-      const alreadyDropped: DropedMember = await this.prisma.dropedMember.findFirst({
-        where: {
-          id: dropedId,
-          userId,
-        },
-      });
+      const { activatedDate } = dto;
+      const alreadyDropped: DropedMember =
+        await this.dropedMmemberDataAccessService.getDropedMemberByDropedId(userId, dropedId);
 
       if (!alreadyDropped) throw new NotFoundException();
 
-      const details: string[] = [];
+      if (activatedDate)
+        await this.dropedMmemberDataAccessService.setMemberToActive(alreadyDropped.memberId);
 
-      details.push(dto.activatedDate, dto.lionYear, dto.dropedDate);
-      if (details.includes(dto.activatedDate)) {
-        await this.prisma.member.update({
-          data: { active: true },
-          where: { id: alreadyDropped.memberId },
-        });
-      }
-
-      return await this.prisma.dropedMember.update({
-        data: {
-          ...dto,
-        },
-        where: {
-          id: dropedId,
-        },
-      });
+      return await this.dropedMmemberDataAccessService.updateDropedMember(dropedId, dto);
     } catch (error) {
       throw error;
     }
@@ -108,25 +63,12 @@ export class DropedMemberService {
 
   public async removeDropedMember(userId: number, dropedId: number) {
     try {
-      const alreadyDropped: DropedMember = await this.prisma.dropedMember.findFirst({
-        where: {
-          id: dropedId,
-          userId,
-        },
-      });
+      const alreadyDropped: DropedMember =
+        await this.dropedMmemberDataAccessService.getDropedMemberByDropedId(userId, dropedId);
 
       if (!alreadyDropped) throw new NotFoundException();
 
-      const date = new Date();
-
-      await this.prisma.dropedMember.update({
-        data: {
-          deletedAt: date,
-        },
-        where: {
-          id: dropedId,
-        },
-      });
+      return await this.dropedMmemberDataAccessService.removeDropedMember(userId, new Date());
     } catch (error) {
       throw error;
     }
