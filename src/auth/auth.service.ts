@@ -155,7 +155,11 @@ export class AuthService {
 
       if (!passwordCheck) throw new HttpException('Credentials Incorrect', 400);
 
-      return this.signToken(user.id, user.email);
+      return {
+        statusCode: 200,
+        access_token: (await this.signToken(user.id, user.email)).access_token,
+        message: 'success',
+      };
     } catch (error) {
       throw error;
     }
