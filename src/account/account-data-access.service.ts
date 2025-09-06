@@ -83,7 +83,6 @@ export class AccountDataAccessService {
         return acc;
       }, {});
 
-    console.log('dues', memberDuesPaymentPerYearMap);
     return {
       memberDetails,
       memberDuesPaymentPerYearMap,
